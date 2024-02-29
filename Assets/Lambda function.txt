@@ -1,0 +1,48 @@
+import pandas as pd
+import psycopg2
+import requests
+import json
+import time
+
+# Configuración de la conexión a Redshift
+conn = psycopg2.connect(
+    dbname='dev',
+    host='redshift://redshift-cluster-1.cbtif1cnlzs5.eu-west-3.redshift.amazonaws.com',
+    port='5439',
+    user='awsuser',
+    password='{{password}}'
+)
+
+query = "SELECT * FROM dev_smartcity.vehicle_data;"
+df = pd.read_sql(query, conn)
+
+conn.close()
+
+if 'location' in df.columns:
+    df['location'] = df['location'].apply(json.loads)
+    df['latitude'] = df['location'].apply(lambda x: x['latitude'])
+    df['longitude'] = df['location'].apply(lambda x: x['longitude'])
+    df.drop('location', axis=1, inplace=True)
+
+# Reemplaza con tu URL de Power BI
+powerbi_url = "https://api.powerbi.com/beta/{{your_complete_url_here}}/rows?experience=power-bi&key={{your_key_here}}"
+
+batch_size = 10
+headers = {'Content-Type': 'application/json'}
+
+for start in range(0, len(df), batch_size):
+    end = start + batch_size
+    batch = df[start:end]
+    json_data = batch.to_json(orient='records', date_format='iso')
+    # Enviar el lote a Power BI
+    try:
+        response = requests.post(powerbi_url, data=json_data, headers=headers)
+        if response.status_code == 200:
+            print(f"Lote enviado con éxito: registros {start} a {end}")
+        else:
+            print(f"Error al enviar el lote: {response.text}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error al realizar la solicitud: {e}")
+   
+    time.sleep(1)
+

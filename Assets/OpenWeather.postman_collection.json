@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "007dbe45-0bbc-41aa-9f67-915d8793f07a",
+		"name": "OpenWeather",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27686255"
+	},
+	"item": [
+		{
+			"name": "Main clima Params",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/2.5/weather?lat=36.72016&lon=-4.42034&appid=a2673e72063ff3a55d00625851b5e2a2&units=metric",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"2.5",
+						"weather"
+					],
+					"query": [
+						{
+							"key": "exclude",
+							"value": "{part}",
+							"disabled": true
+						},
+						{
+							"key": "lat",
+							"value": "36.72016"
+						},
+						{
+							"key": "lon",
+							"value": "-4.42034"
+						},
+						{
+							"key": "appid",
+							"value": "a2673e72063ff3a55d00625851b5e2a2"
+						},
+						{
+							"key": "units",
+							"value": "metric"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Airquality",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api.openweathermap.org/data/2.5/air_pollution?lat=36.72016&lon=-4.42034&appid=a2673e72063ff3a55d00625851b5e2a2",
+					"protocol": "http",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"2.5",
+						"air_pollution"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "36.72016"
+						},
+						{
+							"key": "lon",
+							"value": "-4.42034"
+						},
+						{
+							"key": "appid",
+							"value": "a2673e72063ff3a55d00625851b5e2a2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

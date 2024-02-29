@@ -1,0 +1,108 @@
+pip install gpxpy
+
+## Docker HUB. Run the next command to login into docker hub. So you will be able to download the "confluentinc" Kafka docker images.
+## Remember to be logged into docker hub in yotu docker desktop as well.
+
+Docker login:
+
+# just for knowing, if you want to remove all the containers and volumens meanwhile you are testing the functionality run this:
+docker-compose down -v
+ 
+## STREAMING TRIGGERING
+  1. Run kafka to send data to the topics
+     
+     jobs/main.py
+  2. Run Spark to consume the topics and send the data to S3
+     ## Command to Run SPARK
+     ##Linux##
+docker exec -it smartcityrvm-spark-master-1 spark-submit \
+--master spark://spark-master:7077 \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk:1.11.469 \
+jobs/spark-city.py
+
+     ##Windows PowerShell##
+docker exec -it smartcityrvm-spark-master-1 spark-submit `
+--master spark://spark-master:7077 `
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk:1.11.469 `
+jobs/spark-city.py
+
+     ##Windows Downgrade##
+docker exec -it smartcityrvm-spark-master-1 spark-submit `
+--master spark://spark-master:7077 `
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1,org.apache.hadoop:hadoop-aws:3.2.0,com.amazonaws:aws-java-sdk-bundle:1.11.375 `
+jobs/spark-city.py
+
+
+## Kafka relevant commands to run in Docker-Broker TERMINAL
+
+kafka-topics --list --bootstrap-server broker:29092
+
+kafka-console-consumer --topic vehicle_data --bootstrap-server broker:9092 --from-beginning
+kafka-console-consumer --topic weather_data --bootstrap-server broker:9092 --from-beginning
+kafka-console-consumer --topic failures_data --bootstrap-server broker:9092 --from-beginning
+
+kafka-topics --delete --topic vehicle_data --bootstrap-server broker:9092
+
+## OpenWeather API
+# keep your api key handy and set it as environment variable into Pycharm
+# yo need to run the following command to get access to such variables into your code.
+
+API WEATHER KEY: your api key
+
+pip install python-dotenv
+
+# command in Windows Powershell to create an empty file
+ni .\jobs\config.py
+
+
+## REDSHIFT keep your credentials handy you will copy and paste them a lot of times
+awsuser
+your password
+database:
+dev
+cluster endpoint:
+cluster jdbc connection chain:
+
+
+
+#### AWS LAMBDA. This functions need to be provided with the most of libraries that are going to be used.
+ 1. download the .whl files from Pypi
+ 2. pip install wheel into the folder you are downloading or keeping the .whl files
+ 3. decompress them running wheel unpack. see commands below
+ 4. Remember to open the powershell terminal as Admin and access to the folder where the whl files are.
+ 4. Once all the files unpacked, save all the folder together inside a new folder called "python"
+ 4. Zip this python folder and thats it. this Zip will be uploaded to the LAMBDA Layer
+
+PS C:\WINDOWS> cd $env:USERPROFILE
+PS C:\Users\jrver> cd Downloads
+PS C:\Users\jrver\Downloads> pip install wheel
+Requirement already satisfied: wheel in c:\python311\lib\site-packages (0.42.0)
+
+[notice] A new release of pip is available: 23.1.2 -> 24.0
+[notice] To update, run: python.exe -m pip install --upgrade pip
+PS C:\Users\jrver\Downloads> wheel unpack pandas-2.2.1-cp312-cp312-win_amd64.whl
+Unpacking to: .\pandas-2.2.1...OK
+PS C:\Users\jrver\Downloads> wheel unpack numpy-1.26.4-pp39-pypy39_pp73-win_amd64.whl
+Unpacking to: .\numpy-1.26.4...OK
+PS C:\Users\jrver\Downloads> wheel unpack pytz-2024.1-py2.py3-none-any.whl
+Unpacking to: .\pytz-2024.1...OK
+PS C:\Users\jrver\Downloads>
+
+
+## DBeaver. replace your IAM role
+
+create external schema dev_smartcity
+	from data catalog
+	database smartcitydb
+	iam_role 'arn:aws:iam::851725340236:role/smart-city-redshit-s3-role'
+	region 'eu-west-3';
+	
+select * from dev_smartcity.vehicle_data limit 10;
+
+
+## PowerBI.DAX code to split the timestamp column and create a time hierarchy.
+
+Date = FORMAT('YourTable'[YourTimestampColumn], "YYYY-MM-DD")
+Hour = HOUR('YourTable'[YourTimestampColumn])
+Minute = MINUTE('YourTable'[YourTimestampColumn])
+Second = SECOND('YourTable'[YourTimestampColumn])
