@@ -14,7 +14,7 @@ This repository encompasses a comprehensive Smart City data engineering project 
 ### Project Overview
 
 The project integrates multiple data sources, including GPX files for route information, weather data through OpenWeather API, and simulated failure events, to provide a real-time view of motorcycle training sessions.
-![Project_architecture.png](assets%2FProject_architecture.png)
+![Project_architecture.png](Assets%2FProject_architecture.png)
 ### Technologies Used
 
 - AWS (S3, Glue, Redshift, Lambda)
